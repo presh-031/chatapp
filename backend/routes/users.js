@@ -1,5 +1,6 @@
+import { createNewUser, editPassword } from "../controllers/users.js";
+
 import express from "express";
-import { createNewUser } from "../controllers/users.js";
 
 const router = express.Router();
 
@@ -7,6 +8,11 @@ const router = express.Router();
 router.post("/new-user", createNewUser);
 
 // AUTHENTICATE a user
+
+// CHANGE username
+// router.put("/edit-username", editUsername);
+
 // CHANGE user password
+router.put("/edit-password", editPassword);
 
 export default router;
