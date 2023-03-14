@@ -31,7 +31,29 @@ export const createNewUser = async (req, res) => {
 };
 
 // EDIT username
-// export const editUsername = async () => {};
+export const editUsername = async (req, res) => {
+  const { userId, username } = req.body;
+
+  try {
+    // Find the user in the database by their userId
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update the user's username
+    user.username = username;
+
+    // Save the updated user to the database
+    await user.save();
+
+    res.status(200).json({ message: "Username updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 // EDIT user password
 export const editPassword = async (req, res) => {

@@ -1,4 +1,8 @@
-import { createNewUser, editPassword } from "../controllers/users.js";
+import {
+  createNewUser,
+  editPassword,
+  editUsername,
+} from "../controllers/users.js";
 
 import express from "express";
 
@@ -10,7 +14,7 @@ router.post("/new-user", createNewUser);
 // AUTHENTICATE a user
 
 // CHANGE username
-// router.put("/edit-username", editUsername);
+router.put("/edit-username", editUsername);
 
 // CHANGE user password
 router.put("/edit-password", editPassword);
