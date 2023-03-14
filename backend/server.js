@@ -3,7 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
 // routes imports
-import usersRoutes from "./routes/users";
+import users from "./routes/users.js";
 
 const app = express();
 dotenv.config();
@@ -30,4 +30,4 @@ mongoose
   });
 
 // routes
-app.use("/api/users", usersRoutes);
+app.use("/api/users", users);
