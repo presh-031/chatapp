@@ -30,4 +30,7 @@ mongoose
   });
 
 // routes
+app.get("/", (req, res) => {
+  res.send("Holla!").json(200);
+});
 app.use("/api/users", users);

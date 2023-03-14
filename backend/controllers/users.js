@@ -1,15 +1,14 @@
-import User from "../models/users";
+import User from "../models/users.js";
 
 // REGISTER new user
-const createNewUser = async (req, res) => {
-  const { email, password, userName, createdAt } = req.body;
+export const createNewUser = async (req, res) => {
+  const { email, password, username, createdAt } = req.body;
   // add document to db
   try {
     const user = await User.create({
       email,
       password,
-      userName,
-      createdAt,
+      username,
     });
     res.status(201).json(user);
   } catch (err) {
