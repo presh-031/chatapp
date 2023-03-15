@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
-// routes imports
+import chatrooms from "./routes/chatrooms.js";
 import users from "./routes/users.js";
 
 const app = express();
@@ -34,3 +34,4 @@ app.get("/", (req, res) => {
   res.send("Holla!").json(200);
 });
 app.use("/api/users", users);
+app.use("/api/chatrooms", chatrooms);
