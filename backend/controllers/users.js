@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import User from "../models/users.js";
 
 const hashRounds = 10;
@@ -27,49 +28,59 @@ export const createNewUser = async (req, res) => {
       data: user,
     });
   } catch (err) {
-    if (err instanceof MongoError) {
-      // Handle MongoDB specific error
-      res.status(500).json({
-        success: false,
-        error: "MongoDB error occurred",
-      });
-    } else if (err instanceof bcrypt.BcryptError) {
-      // Handle bcrypt specific error
-      res.status(500).json({
-        success: false,
-        error: "Bcrypt error occurred",
-      });
-    } else {
-      // Handle generic error
-      res.status(500).json({
-        success: false,
-        error: err.message,
-      });
-    }
+    // Handle generic error
+    res.status(500).json({
+      success: false,
+      error: "Could not create user",
+    });
   }
 };
 
 // LOGIN user
-export const loginUser = async (req, res)=> {
+export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   // Search for the user in the database
   try {
     const user = await User.findOne({ email });
-    if (!user){
+    if (!user) {
       return res.status(404).json({
         success: false,
         error: "User not found",
-      })
+      });
     }
-    // Compare the password 
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) {
+    // Compare the password
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
       return res.status(401).json({
         success: false,
-        error: 'Passwords do not match'
-      })
+        error: "Passwords do not match",
+      });
     }
-}
+    // Generate JWT token
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    if (token) {
+      return res.status(200).json({
+        success: true,
+        token,
+        user: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          createdAt: user.createdAt,
+        },
+      });
+    }
+  } catch (err) {
+    console.error(err); // Log the error for debugging purposes
+
+    res.status(500).json({
+      success: false,
+      error: "An error occurred while logging in.",
+    });
+  }
+};
 
 // EDIT username
 export const editUsername = async (req, res) => {
