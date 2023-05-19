@@ -2,6 +2,7 @@ import {
   createNewUser,
   editPassword,
   editUsername,
+  loginUser,
 } from "../controllers/users.js";
 
 import express from "express";
@@ -12,6 +13,7 @@ const router = express.Router();
 router.post("/new-user", createNewUser);
 
 // AUTHENTICATE a user
+router.post("/login", loginUser);
 
 // CHANGE username
 router.put("/edit-username", editUsername);

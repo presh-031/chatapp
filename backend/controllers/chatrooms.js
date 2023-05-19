@@ -26,3 +26,35 @@ export const createNewChatRoom = async (req, res) => {
     .status(201)
     .json({ chatroomId: newChatroom._id, messages: newChatroom.messages });
 };
+
+// POST /chatroom/:chatroomId/message
+export const chatInChatRoom = async (req, res) => {
+  try {
+    const { chatroomId } = req.params;
+    const { senderId, text } = req.body;
+
+    console.log(chatroomId, senderId, text);
+    // // Create a new message and add it to the chatroom
+    // const newMessage = new Message({
+    //   chatroom: chatroomId,
+    //   sender: senderId,
+    //   text: text,
+    // });
+    // await newMessage.save();
+
+    // const chatroom = await Chatroom.findByIdAndUpdate(
+    //   chatroomId,
+    //   {
+    //     $push: { messages: newMessage._id },
+    //   },
+    //   { new: true }
+    // ).populate("messages");
+
+    // return res.status(201).json(chatroom);
+    return res.status(201).json({
+      message: "controller runs",
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};

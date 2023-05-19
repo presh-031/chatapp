@@ -5,9 +5,9 @@ const hashRounds = 10;
 
 // REGISTER new user
 export const createNewUser = async (req, res) => {
-  const { email, password, username, createdAt } = req.body;
+  const { email, password, username } = req.body;
 
-  // Add document to db
+  // Add new user document to db
   try {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, hashRounds);
@@ -22,13 +22,54 @@ export const createNewUser = async (req, res) => {
     // Save the user document to the database
     await user.save();
 
-    res.status(201).json(user);
-  } catch (err) {
-    res.status(500).json({
-      error: err.message,
+    res.status(201).json({
+      success: true,
+      data: user,
     });
+  } catch (err) {
+    if (err instanceof MongoError) {
+      // Handle MongoDB specific error
+      res.status(500).json({
+        success: false,
+        error: "MongoDB error occurred",
+      });
+    } else if (err instanceof bcrypt.BcryptError) {
+      // Handle bcrypt specific error
+      res.status(500).json({
+        success: false,
+        error: "Bcrypt error occurred",
+      });
+    } else {
+      // Handle generic error
+      res.status(500).json({
+        success: false,
+        error: err.message,
+      });
+    }
   }
 };
+
+// LOGIN user
+export const loginUser = async (req, res)=> {
+  const { email, password } = req.body;
+  // Search for the user in the database
+  try {
+    const user = await User.findOne({ email });
+    if (!user){
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      })
+    }
+    // Compare the password 
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return res.status(401).json({
+        success: false,
+        error: 'Passwords do not match'
+      })
+    }
+}
 
 // EDIT username
 export const editUsername = async (req, res) => {
@@ -59,7 +100,7 @@ export const editUsername = async (req, res) => {
 export const editPassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
-    // const userId = req.user.id; : Auth is not yet added
+
     const { userId } = req.body;
 
     // Get the user document from the database
